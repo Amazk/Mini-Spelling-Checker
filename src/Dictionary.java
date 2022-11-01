@@ -1,36 +1,31 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
 public class Dictionary {
-
-    private final List<String> dico = new ArrayList<>();
-    private final Trigram trigram = new Trigram();
-    public Dictionary(String filename){
+    private final PrefixTree dico = new PrefixTree(false);
+    private final Trigram trigram = new Trigram();;
+    public Dictionary(String fileName){
+        String line;
         try {
-            Scanner scanner = new Scanner(new File(filename));
+            Scanner scanner = new Scanner(new File(fileName));
             while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                dico.add(line);
+                line = scanner.nextLine();
+                dico.createTree(line);
                 trigram.createTrigram(line);
             }
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
-
-    public String testLeven(String word) {
-        return Levenshtein.levenMin(word,dico);
-    }
-
     public boolean contain(String word) {
-        return dico.contains(word);
+        return dico.contain(word);
     }
-
-    public Map<String, List<String>> getTrigram() {
+    public Map<String, PrefixTree> getTrigrams() {
         return trigram.getTrigrams();
+    }
+    public boolean containTri(String trigram) {
+        return getTrigrams().containsKey(trigram);
     }
 }

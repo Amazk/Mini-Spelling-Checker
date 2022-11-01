@@ -19,36 +19,48 @@ public class SpellChecker {
         this.dictionary = dictionary;
     }
     public void spell(String word) {
-        //System.out.println(dictionary.testLeven(word));
         if(dictionary.contain(word)) System.out.println(word+" is in dico");
         else {
-            List<String> trigramList = new ArrayList<>();
-            Trigram wordTrigram = new Trigram();
-            wordTrigram.createTrigram(word);
-            for(String key : wordTrigram.keys())
-                if(dictionary.getTrigram().containsKey(key))
-                    trigramList.addAll(dictionary.getTrigram().get(key));
-            while(trigramList.stream().distinct().toList().size() > 100)
-                supMinOcc(trigramList);
-            Set<String> set = new HashSet<>(trigramList);
-            while(set.size() > 5)
-                set.remove(Levenshtein.levenMax(word, set));
-            System.out.println(set);
-        }
-    }
-
-    private void supMinOcc(List<String> list) {
-        int min = 0;
-        String minWord ="";
-        for(String word : list) {
-            if(Collections.frequency(list, word) < min) {
-                min = Collections.frequency(list, word);
-                minWord = word;
+            Map<String, Integer> triCommun = new HashMap<>();
+            for(String trigram : getTri(word)) {
+                if (!dictionary.containTri(trigram)) continue;
+                ParcoursTree.parcoursProfondeur(dictionary.getTrigrams().get(trigram), triCommun);
             }
+            String key;
+            Map<String, Integer> triCent = new HashMap<>();
+            while(triCent.size() < 50 && triCommun.size()!=0) {
+                key = compare(triCommun);
+                triCent.put(key,triCommun.get(key));
+                triCommun.remove(key);
+            }
+            Map<String, Integer> triCinq = new HashMap<>();
+            while(triCinq.size() < 5) {
+                key = Levenshtein.levenMin(word, triCent);
+                triCinq.put(key, triCent.get(key));
+                triCent.remove(key);
+            }
+            System.out.println(word+" : "+triCinq);
         }
-        while(list.contains(minWord)) list.remove(minWord);
     }
-
+    private Set<String> getTri(String word) {
+        if(word.length()==1) return Set.of("<"+word+">");
+        Set<String> set = new HashSet<>();
+        set.add("<"+word.substring(0,2));
+        for(int i=0; i<word.length()-2; i++)
+            set.add(word.substring(i,i+3));
+        set.add(word.substring(word.length()-2)+">");
+        return set;
+    }
+    private String compare(Map<String, Integer> triCommun) {
+        String key="";
+        int max=0;
+        for(String k : triCommun.keySet()) {
+            if(triCommun.get(k) <= max) continue;
+            max = triCommun.get(k);
+            key=k;
+        }
+        return key;
+    }
     public ArrayList<String> getWords() {
         return words;
     }

@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class Levenshtein {
 
@@ -14,37 +13,20 @@ public class Levenshtein {
                 if(str1.charAt(i-1) == str2.charAt(j-1)) {
                     values[i][j] = values[i-1][j-1];
                 } else {
-                    values[i][j] = 1 + min(values[i-1][j],values[i][j-1],values[i-1][j-1]);
+                    values[i][j] = 1 + Math.min(Math.min(values[i-1][j],values[i][j-1]),values[i-1][j-1]);
                 }
             }
         }
         return values[str1.length()][str2.length()];
     }
-
-    private static int min(int a, int b, int c) {
-        return Math.min(Math.min(a,b),c);
-    }
-
-
-    public static String levenMin(String word, List<String> list) {
-        int min = Levenshtein.distance(word, list.get(0));
-        String myword = list.get(0);
-        for(String wordd : list) {
-            if(Levenshtein.distance(wordd,word) < min) {
-                min = Levenshtein.distance(wordd,word);
-                myword = wordd;
-            }
-        }
-        return myword;
-    }
-
-    public static String levenMax(String word, Set<String> set) {
-        int max = 0;
+    public static String levenMin(String word, Map<String, Integer> map) {
+        int min = 100;
         String myword = "";
-        for(String wordd : set) {
-            if(Levenshtein.distance(wordd,word) > max) {
-                max = Levenshtein.distance(wordd,word);
-                myword = wordd;
+        for(String key : map.keySet()) {
+            if(key.length()<=1) continue;
+            if(Levenshtein.distance(key,word) < min) {
+                min = Levenshtein.distance(key,word);
+                myword = key;
             }
         }
         return myword;
