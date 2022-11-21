@@ -13,12 +13,18 @@ public class Levenshtein {
                 if(str1.charAt(i-1) == str2.charAt(j-1)) {
                     values[i][j] = values[i-1][j-1];
                 } else {
-                    values[i][j] = 1 + Math.min(Math.min(values[i-1][j],values[i][j-1]),values[i-1][j-1]);
+                    values[i][j] = 1 + Math.min(Math.min(values[i-1][j],values[i][j-1]),values[i-1][j-1]);  //Effacement,Insertion,Substitution
+                    //values[i][j] = 1 + Math.min(Math.min(Math.min(values[i-1][j],values[i][j-1]),values[i-1][j-1]),transposition(str1,str2,i,j,values));  //Effacement,Insertion,Substitution,Transposition
                 }
             }
         }
         return values[str1.length()][str2.length()];
     }
+    
+    private static int transposition(String str1,String str2,int i, int j,int [][] values){   // Ajout de la transposition
+        return i>1 && j>1 && str1.substring(i - 1, i).equals(str2.substring(j - 2, j - 1)) && str1.substring(i - 2,i-1).equals(str2.substring(j - 1,j)) ? values[i - 2][j- 2] : 40;
+    }
+    
     public static String levenMin(String word, Map<String, Integer> map) {
         int min = 100;
         String myword = "";
