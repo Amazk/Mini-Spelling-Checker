@@ -39,7 +39,7 @@ public class SpellChecker {
                 triCinq.put(key, triCent.get(key));
                 triCent.remove(key);
             }
-            System.out.println(word+" : "+triCinq);
+            System.out.println(word+" : "+triCinq.keySet());
         }
     }
     private Set<String> getTri(String word) {
