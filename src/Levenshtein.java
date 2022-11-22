@@ -37,4 +37,21 @@ public class Levenshtein {
         }
         return myword;
     }
+     public static Set<String> levenMin(String word, Map<String,Integer> tri) {
+        Map<String, Integer> words = new HashMap<>();
+        int lev;
+        for (String key : tri.keySet()) {
+            if (key.length() <= 1) continue;
+            lev=Levenshtein.distance(key, word);
+            if (words.size() < 5) words.put(key, lev);
+            for (String i : words.keySet()) {
+                if (lev < words.get(i)) {
+                    words.remove(i);
+                    words.put(key, lev);
+                    break;
+                }
+            }
+        }
+        return words.keySet();
+    }
 }
